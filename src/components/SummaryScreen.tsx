@@ -49,7 +49,7 @@ export function SummaryScreen({ question, onNewTest }: SummaryScreenProps) {
                 <div className="p-4 bg-blue-50 rounded-lg">
                   <p className="text-base leading-relaxed">{item.q}</p>
                 </div>
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="p-4 bg-green-50 rounded-lg">
                   <p className="text-base leading-relaxed">{item.a}</p>
                 </div>
               </div>

@@ -44,13 +44,15 @@ export function QuestionScreen({ question, currentQuestionIndex, onNext }: Quest
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <div className="p-6 bg-blue-50 rounded-lg">
+            <div className="px-6 py-10 bg-blue-50 rounded-lg">
               <p className="text-lg leading-relaxed">{current.q}</p>
             </div>
 
             {showAnswer && (
-              <div className="p-6 bg-green-50 rounded-lg border-2 border-green-200">
-                <p className="text-lg leading-relaxed">{current.a}</p>
+              <div className="px-6 py-10 bg-green-50 rounded-lg">
+                <p className="text-lg leading-relaxed">
+                  {current.a && current.a.trim() !== '' ? current.a : 'Bonne chance !'}
+                </p>
               </div>
             )}
           </div>

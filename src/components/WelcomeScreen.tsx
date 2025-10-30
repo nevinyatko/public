@@ -41,7 +41,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-blue-50 to-white">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Examen du permis de conduire</CardTitle>
+          <CardTitle style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Examen du permis de conduire</CardTitle>
           <CardDescription className="text-lg">
             Questions Orales
           </CardDescription>
