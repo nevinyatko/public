@@ -41,14 +41,14 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-blue-50 to-white">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle>Test du Code de la Route</CardTitle>
-          <CardDescription>
-            Entraînement aux vérifications théoriques
+          <CardTitle className="text-3xl">Examen du permis de conduire</CardTitle>
+          <CardDescription className="text-lg">
+            Questions Orales
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-3">
-            <Label htmlFor="block-input">Numéro du bloc (0-100)</Label>
+            <Label htmlFor="block-input" className="text-lg">Numéro du bloc (0-100)</Label>
             <div className="flex gap-2">
               <Input
                 id="block-input"
@@ -66,13 +66,14 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                     handleManualStart();
                   }
                 }}
+                className="text-lg h-12"
               />
-              <Button onClick={handleManualStart}>
+              <Button onClick={handleManualStart} className="text-lg h-12 px-6">
                 Démarrer
               </Button>
             </div>
             {error && (
-              <p className="text-sm text-red-500">{error}</p>
+              <p className="text-base text-red-500">{error}</p>
             )}
           </div>
 
@@ -80,19 +81,19 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
+            <div className="relative flex justify-center text-base uppercase">
               <span className="bg-white px-2 text-muted-foreground">
                 Ou
               </span>
             </div>
           </div>
 
-          <Button 
-            onClick={handleRandomStart} 
-            variant="outline" 
-            className="w-full"
+          <Button
+            onClick={handleRandomStart}
+            variant="outline"
+            className="w-full text-lg h-12"
           >
-            <Shuffle className="mr-2 h-4 w-4" />
+            <Shuffle className="mr-2 h-5 w-5" />
             Bloc aléatoire
           </Button>
         </CardContent>

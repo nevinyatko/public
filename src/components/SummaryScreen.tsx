@@ -22,18 +22,18 @@ export function SummaryScreen({ question, onNewTest }: SummaryScreenProps) {
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <div className="flex items-center justify-center mb-4">
-            <CheckCircle className="h-16 w-16 text-green-500" />
+            <CheckCircle className="h-20 w-20 text-green-500" />
           </div>
           <div className="flex items-center justify-between mb-2">
-            <Badge variant="secondary">
+            <Badge variant="secondary" className="text-base px-3 py-1">
               Bloc {question.block}
             </Badge>
-            <Badge variant={question.type === "VI" ? "default" : "outline"}>
+            <Badge variant={question.type === "VI" ? "default" : "outline"} className="text-base px-3 py-1">
               {question.type === "VI" ? "Vérification Intérieure" : "Vérification Extérieure"}
             </Badge>
           </div>
-          <CardTitle className="text-center">Test terminé !</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="text-center text-3xl">Test terminé !</CardTitle>
+          <CardDescription className="text-center text-lg">
             Voici le récapitulatif de vos questions
           </CardDescription>
         </CardHeader>
@@ -43,21 +43,21 @@ export function SummaryScreen({ question, onNewTest }: SummaryScreenProps) {
               {index > 0 && <Separator className="mb-6" />}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline">Q{index + 1}</Badge>
-                  <span className="text-sm text-muted-foreground">{item.label}</span>
+                  <Badge variant="outline" className="text-base px-3 py-1">Q{index + 1}</Badge>
+                  <span className="text-base text-muted-foreground">{item.label}</span>
                 </div>
-                <div className="p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm">{item.q}</p>
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <p className="text-base leading-relaxed">{item.q}</p>
                 </div>
-                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                  <p className="text-sm">{item.a}</p>
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <p className="text-base leading-relaxed">{item.a}</p>
                 </div>
               </div>
             </div>
           ))}
 
-          <Button onClick={onNewTest} className="w-full mt-6">
-            <RotateCcw className="mr-2 h-4 w-4" />
+          <Button onClick={onNewTest} className="w-full mt-6 text-lg h-12">
+            <RotateCcw className="mr-2 h-5 w-5" />
             Nouveau test
           </Button>
         </CardContent>
