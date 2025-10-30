@@ -2,7 +2,7 @@
   "name": "Driving Test Training App",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://nevinyatko.github.io/perso-01",
+  "homepage": "https://nevinyatko.github.io/public",
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.6",
