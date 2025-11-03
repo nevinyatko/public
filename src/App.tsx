@@ -1,30 +1,55 @@
 import { useState } from "react";
-import { WelcomeScreen } from "./components/WelcomeScreen";
+import { ModeSelectionScreen } from "./components/ModeSelectionScreen";
+import { BlockSelectionScreen } from "./components/BlockSelectionScreen";
+import { ThemeSelectionScreen } from "./components/ThemeSelectionScreen";
 import { QuestionScreen } from "./components/QuestionScreen";
+import { ThemeQuestionScreen } from "./components/ThemeQuestionScreen";
 import { SummaryScreen } from "./components/SummaryScreen";
-import { getQuestionByBlock } from "./data/questions";
-import type { Question } from "./data/questions";
+import { getQuestionByBlock, getRandomQuestionByTheme } from "./data/questions";
+import type { Question, ThemeQuestion, Theme } from "./data/questions";
 
-type Screen = "welcome" | "question" | "summary";
+type Screen = "modeSelection" | "blockSelection" | "themeSelection" | "blockQuestion" | "themeQuestion" | "summary";
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("welcome");
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [screen, setScreen] = useState<Screen>("modeSelection");
+  const [currentBlockQuestion, setCurrentBlockQuestion] = useState<Question | null>(null);
+  const [currentThemeQuestion, setCurrentThemeQuestion] = useState<ThemeQuestion | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
 
-  const handleStart = (blockNumber: string) => {
-    const question = getQuestionByBlock(blockNumber);
-    
+  const handleModeSelection = (mode: "theme" | "block") => {
+    if (mode === "theme") {
+      setScreen("themeSelection");
+    } else {
+      setScreen("blockSelection");
+    }
+  };
+
+  const handleThemeSelection = (theme: Theme) => {
+    setSelectedTheme(theme);
+    const question = getRandomQuestionByTheme(theme);
+
     if (question) {
-      setCurrentQuestion(question);
+      setCurrentThemeQuestion(question);
+      setScreen("themeQuestion");
+    } else {
+      alert(`Aucune question trouvée pour le thème ${theme}.`);
+    }
+  };
+
+  const handleBlockStart = (blockNumber: string) => {
+    const question = getQuestionByBlock(blockNumber);
+
+    if (question) {
+      setCurrentBlockQuestion(question);
       setCurrentQuestionIndex(0);
-      setScreen("question");
+      setScreen("blockQuestion");
     } else {
       alert(`Aucune question trouvée pour le bloc ${blockNumber}. Veuillez choisir un autre bloc.`);
     }
   };
 
-  const handleNext = () => {
+  const handleBlockQuestionNext = () => {
     if (currentQuestionIndex < 2) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
@@ -32,24 +57,61 @@ export default function App() {
     }
   };
 
+  const handleThemeQuestionNext = () => {
+    if (selectedTheme) {
+      const nextQuestion = getRandomQuestionByTheme(selectedTheme);
+      if (nextQuestion) {
+        setCurrentThemeQuestion(nextQuestion);
+      }
+    }
+  };
+
   const handleNewTest = () => {
-    setCurrentQuestion(null);
+    setCurrentBlockQuestion(null);
+    setCurrentThemeQuestion(null);
     setCurrentQuestionIndex(0);
-    setScreen("welcome");
+    setSelectedTheme(null);
+    setScreen("modeSelection");
+  };
+
+  const handleBackToModeSelection = () => {
+    setScreen("modeSelection");
   };
 
   return (
     <>
-      {screen === "welcome" && <WelcomeScreen onStart={handleStart} />}
-      {screen === "question" && currentQuestion && (
-        <QuestionScreen
-          question={currentQuestion}
-          currentQuestionIndex={currentQuestionIndex}
-          onNext={handleNext}
+      {screen === "modeSelection" && (
+        <ModeSelectionScreen onSelectMode={handleModeSelection} />
+      )}
+      {screen === "blockSelection" && (
+        <BlockSelectionScreen
+          onStart={handleBlockStart}
+          onBack={handleBackToModeSelection}
         />
       )}
-      {screen === "summary" && currentQuestion && (
-        <SummaryScreen question={currentQuestion} onNewTest={handleNewTest} />
+      {screen === "themeSelection" && (
+        <ThemeSelectionScreen
+          onSelectTheme={handleThemeSelection}
+          onBack={handleBackToModeSelection}
+        />
+      )}
+      {screen === "blockQuestion" && currentBlockQuestion && (
+        <QuestionScreen
+          question={currentBlockQuestion}
+          currentQuestionIndex={currentQuestionIndex}
+          onNext={handleBlockQuestionNext}
+          onReset={handleNewTest}
+        />
+      )}
+      {screen === "themeQuestion" && currentThemeQuestion && (
+        <ThemeQuestionScreen
+          question={currentThemeQuestion}
+          onNext={handleThemeQuestionNext}
+          onReset={handleNewTest}
+        />
+      )}
+      {screen === "summary" && currentBlockQuestion && (
+        <SummaryScreen question={currentBlockQuestion} onNewTest={handleNewTest} />
       )}
     </>
   );

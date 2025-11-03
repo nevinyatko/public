@@ -1020,3 +1020,54 @@ export function getRandomBlock(): string {
   const randomIndex = Math.floor(Math.random() * questions.length);
   return questions[randomIndex].block;
 }
+
+export type Theme = "verification" | "qser" | "secours";
+
+export interface ThemeQuestion {
+  block: string;
+  type: "VI" | "VE";
+  theme: Theme;
+  question: string;
+  answer: string;
+}
+
+export function getQuestionsByTheme(theme: Theme): ThemeQuestion[] {
+  const themeQuestions: ThemeQuestion[] = [];
+
+  questions.forEach((q) => {
+    if (theme === "verification") {
+      themeQuestions.push({
+        block: q.block,
+        type: q.type,
+        theme: "verification",
+        question: q.question1,
+        answer: q.answer1,
+      });
+    } else if (theme === "qser") {
+      themeQuestions.push({
+        block: q.block,
+        type: q.type,
+        theme: "qser",
+        question: q.question2,
+        answer: q.answer2,
+      });
+    } else if (theme === "secours") {
+      themeQuestions.push({
+        block: q.block,
+        type: q.type,
+        theme: "secours",
+        question: q.question3,
+        answer: q.answer3,
+      });
+    }
+  });
+
+  return themeQuestions;
+}
+
+export function getRandomQuestionByTheme(theme: Theme): ThemeQuestion | undefined {
+  const themeQuestions = getQuestionsByTheme(theme);
+  if (themeQuestions.length === 0) return undefined;
+  const randomIndex = Math.floor(Math.random() * themeQuestions.length);
+  return themeQuestions[randomIndex];
+}
