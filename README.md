@@ -8,18 +8,38 @@ Application d'entraînement pour les questions de vérifications du permis de co
 
 ## 📱 Features
 
-- **100 Question Blocks**: Complete database of verification questions (VI and VE types)
-- **Random Block Selection**: Practice with randomized question blocks
-- **Manual Block Selection**: Choose specific blocks (0-100)
+### Training Modes
+- **Theme-Based Training**: Practice specific question types independently
+  - Vérification (vehicle verification questions)
+  - QSER (road safety questions)
+  - 1ers Secours (first aid questions)
+- **Block-Based Training**: Complete all three questions from a specific block
+  - Random block selection
+  - Manual block selection (0-100)
+
+### Interface Features
+- **Progressive Question Display**: Show answer only when requested
+- **Session Reset**: Return to mode selection at any time
+- **Progress Indicators**: Visual dots showing current question progress in block mode
+- **Summary Screen**: Review all questions and answers after completing a block
+- **Responsive Navigation**: Back buttons and intuitive flow between screens
+
+### Technical Features
+- **100 Question Blocks**: Complete database with VI and VE verification questions
+- **Detailed Answers**: Comprehensive responses for all verification questions
 - **Progressive Web App (PWA)**: Install on mobile devices like a native app
 - **Offline Support**: Works without internet after first visit
 - **Mobile-First Design**: Optimized for smartphones and tablets
 
 ## 🗂️ Question Types
 
-- **VI (Vérification Intérieure)**: Interior verification questions
-- **VE (Vérification Extérieure)**: Exterior verification questions
-- **3 Questions per Block**: Vérification, QSER, and 1ers Secours
+Each block contains three questions across different categories:
+
+1. **Vérification**: Vehicle verification questions (VI or VE type)
+   - **VI (Vérification Intérieure)**: Interior verification questions
+   - **VE (Vérification Extérieure)**: Exterior verification questions
+2. **QSER**: Questions de Sécurité Routière (road safety questions)
+3. **1ers Secours**: Questions de Premiers Secours (first aid questions)
 
 ## 🚀 Development
 
@@ -105,17 +125,37 @@ driving_test_training_app_prototype/
 │   └── sw.js              # Service worker for offline support
 ├── src/
 │   ├── components/        # React components
-│   │   ├── WelcomeScreen.tsx
-│   │   ├── QuestionScreen.tsx
-│   │   └── SummaryScreen.tsx
+│   │   ├── ModeSelectionScreen.tsx      # Choose between theme/block mode
+│   │   ├── ThemeSelectionScreen.tsx     # Select theme (Vérification, QSER, Secours)
+│   │   ├── BlockSelectionScreen.tsx     # Select block or random
+│   │   ├── ThemeQuestionScreen.tsx      # Display theme-based questions
+│   │   ├── QuestionScreen.tsx           # Display block questions with progress
+│   │   ├── SummaryScreen.tsx            # Review completed block
+│   │   └── ui/                          # Reusable UI components
 │   ├── data/
-│   │   └── questions.ts   # All 100 question blocks
-│   ├── App.tsx            # Main app component
+│   │   ├── questions.ts                 # All 100 question blocks (updated)
+│   │   └── questions_backup.ts          # Original questions backup
+│   ├── App.tsx            # Main app component with flow logic
 │   └── main.tsx           # Entry point
 ├── vite.config.ts         # Vite configuration
 └── package.json           # Dependencies and scripts
 
 ```
+
+## 🔄 User Flow
+
+1. **Mode Selection**: Choose training mode (Theme or Block)
+2. **Theme Mode**:
+   - Select theme (Vérification, QSER, or 1ers Secours)
+   - Practice unlimited random questions of that type
+   - View answer for each question
+   - Get next random question of the same theme
+3. **Block Mode**:
+   - Choose random block or enter specific block number (0-100)
+   - Complete all 3 questions sequentially
+   - Progress indicators show current position
+   - Review summary with all questions and answers
+4. **Reset**: Return to mode selection at any time
 
 ## 📚 Additional Documentation
 
