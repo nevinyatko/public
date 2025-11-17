@@ -15,10 +15,15 @@ interface QuestionScreenProps {
 export function QuestionScreen({ question, currentQuestionIndex, onNext, onReset }: QuestionScreenProps) {
   const [showAnswer, setShowAnswer] = useState(false);
 
+  // Helper function to remove context prefix in brackets
+  const removeContextPrefix = (text: string): string => {
+    return text.replace(/^\[.*?\]\s*/, '');
+  };
+
   const questions = [
     { q: question.question1, a: question.answer1, label: "Vérification" },
-    { q: question.question2, a: question.answer2, label: "QSER" },
-    { q: question.question3, a: question.answer3, label: "1ers Secours" }
+    { q: removeContextPrefix(question.question2), a: question.answer2, label: "QSER" },
+    { q: removeContextPrefix(question.question3), a: question.answer3, label: "1ers Secours" }
   ];
 
   const current = questions[currentQuestionIndex];
