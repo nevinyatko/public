@@ -13,6 +13,7 @@ export type Theme = "verification" | "qser" | "secours";
 
 export interface ThemeQuestion {
   block: string;
+  blocks?: string[]; // Array of all blocks where this question appears
   type: "VI" | "VE";
   theme: Theme;
   question: string;
@@ -1063,9 +1064,87 @@ export function getQuestionsByTheme(theme: Theme): ThemeQuestion[] {
   return themeQuestions;
 }
 
-export function getRandomQuestionByTheme(theme: Theme): ThemeQuestion | undefined {
+export function getRandomQuestionByTheme(
+  theme: Theme,
+  excludeQuestion?: string
+): ThemeQuestion | undefined {
   const themeQuestions = getQuestionsByTheme(theme);
   if (themeQuestions.length === 0) return undefined;
-  const randomIndex = Math.floor(Math.random() * themeQuestions.length);
-  return themeQuestions[randomIndex];
+
+  // Deduplicate questions and collect all blocks where each unique question appears
+  const uniqueQuestions = new Map<string, ThemeQuestion>();
+  themeQuestions.forEach((q) => {
+    const existing = uniqueQuestions.get(q.question);
+    if (!existing) {
+      // First occurrence: create entry with blocks array
+      uniqueQuestions.set(q.question, {
+        ...q,
+        blocks: [q.block],
+      });
+    } else {
+      // Add this block to the existing question's blocks array
+      existing.blocks!.push(q.block);
+    }
+  });
+
+  // Convert map values to array and filter out the excluded question
+  let uniqueQuestionsArray = Array.from(uniqueQuestions.values());
+
+  if (excludeQuestion) {
+    uniqueQuestionsArray = uniqueQuestionsArray.filter(
+      (q) => q.question !== excludeQuestion
+    );
+  }
+
+  // If no questions left after filtering, return any question (edge case)
+  if (uniqueQuestionsArray.length === 0) {
+    uniqueQuestionsArray = Array.from(uniqueQuestions.values());
+  }
+
+  // Load weights from localStorage
+  const weights = getQuestionWeights(theme);
+
+  // Calculate weighted random selection
+  const weightedQuestions = uniqueQuestionsArray.map((q) => ({
+    question: q,
+    weight: weights[q.question] || 1.0,
+  }));
+
+  const totalWeight = weightedQuestions.reduce((sum, wq) => sum + wq.weight, 0);
+  let random = Math.random() * totalWeight;
+
+  for (const wq of weightedQuestions) {
+    random -= wq.weight;
+    if (random <= 0) {
+      return wq.question;
+    }
+  }
+
+  // Fallback (should not happen)
+  return uniqueQuestionsArray[0];
+}
+
+// Helper functions for weight management
+function getQuestionWeights(theme: Theme): Record<string, number> {
+  const stored = localStorage.getItem(`questionWeights_${theme}`);
+  return stored ? JSON.parse(stored) : {};
+}
+
+export function updateQuestionWeight(
+  theme: Theme,
+  questionText: string,
+  knowsWell: boolean
+): void {
+  const weights = getQuestionWeights(theme);
+  const currentWeight = weights[questionText] || 1.0;
+
+  if (knowsWell) {
+    // "Acquis" - reduce weight by 50%, minimum 0.1
+    weights[questionText] = Math.max(0.1, currentWeight * 0.5);
+  } else {
+    // "À revoir" - double the weight, maximum 10
+    weights[questionText] = Math.min(10, currentWeight * 2);
+  }
+
+  localStorage.setItem(`questionWeights_${theme}`, JSON.stringify(weights));
 }

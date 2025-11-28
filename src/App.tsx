@@ -5,7 +5,7 @@ import { ThemeSelectionScreen } from "./components/ThemeSelectionScreen";
 import { QuestionScreen } from "./components/QuestionScreen";
 import { ThemeQuestionScreen } from "./components/ThemeQuestionScreen";
 import { SummaryScreen } from "./components/SummaryScreen";
-import { getQuestionByBlock, getRandomQuestionByTheme } from "./data/questions";
+import { getQuestionByBlock, getRandomQuestionByTheme, updateQuestionWeight } from "./data/questions";
 import type { Question, ThemeQuestion, Theme } from "./data/questions";
 
 type Screen = "modeSelection" | "blockSelection" | "themeSelection" | "blockQuestion" | "themeQuestion" | "summary";
@@ -16,6 +16,10 @@ export default function App() {
   const [currentThemeQuestion, setCurrentThemeQuestion] = useState<ThemeQuestion | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
+
+  // Track knowledge level for each question
+  // Map of question text -> boolean (true = knows well, false = needs work)
+  const [questionKnowledge, setQuestionKnowledge] = useState<Map<string, boolean>>(new Map());
 
   const handleModeSelection = (mode: "theme" | "block") => {
     if (mode === "theme") {
@@ -57,9 +61,32 @@ export default function App() {
     }
   };
 
+  const handleKnowledgeLevel = (questionText: string, knowsWell: boolean) => {
+    setQuestionKnowledge((prev: Map<string, boolean>) => {
+      const newMap = new Map(prev);
+      newMap.set(questionText, knowsWell);
+      return newMap;
+    });
+
+    // Store in localStorage for persistence
+    const stored = JSON.parse(localStorage.getItem('questionKnowledge') || '[]');
+    const updated = stored.filter((item: any) => item.question !== questionText);
+    updated.push({ question: questionText, knowsWell, timestamp: Date.now() });
+    localStorage.setItem('questionKnowledge', JSON.stringify(updated));
+
+    // Update question weight for adaptive learning
+    if (selectedTheme) {
+      updateQuestionWeight(selectedTheme, questionText, knowsWell);
+    }
+  };
+
   const handleThemeQuestionNext = () => {
     if (selectedTheme) {
-      const nextQuestion = getRandomQuestionByTheme(selectedTheme);
+      // Exclude the current question to prevent immediate repeats
+      const nextQuestion = getRandomQuestionByTheme(
+        selectedTheme,
+        currentThemeQuestion?.question
+      );
       if (nextQuestion) {
         setCurrentThemeQuestion(nextQuestion);
       }
@@ -108,6 +135,7 @@ export default function App() {
           question={currentThemeQuestion}
           onNext={handleThemeQuestionNext}
           onReset={handleNewTest}
+          onKnowledgeLevel={handleKnowledgeLevel}
         />
       )}
       {screen === "summary" && currentBlockQuestion && (
